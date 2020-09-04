@@ -34,7 +34,7 @@ The function `New-UniFilter` does all the filter building work for you:
     "EmployeeID -eq '10001' -or EmployeeID -eq '10020' -or EmployeeID -eq '10032'"
 
 
-The filter length is limited to 100 clauses but can be manually overwritten using the `-JoinLimit` parameter. There is a hardcoded limit in the cmdlets, though, so don't get too excited about it. :-)
+The filter length is limited to 25 clauses but can be manually overwritten using the `-JoinLimit` parameter. There is a hardcoded limit in the cmdlets, though, so don't get too excited about it. :-)
 
 In the end our example from above will look like:
 

@@ -34,13 +34,18 @@ MANDATORY
 Maximum amount of individual filters to be join together
 
 OPTIONAL
-DEFAULT = 100
+DEFAULT = 25
 
 .EXAMPLE
 1234,5678,'unkown' | New-UniFilter -Attribute EmployeeID -Operator eq -LogicalJoin or | %{Get-ADUser -Filter $_}
 
 .NOTES
-Version 1.0
+Version 1.0:
+    Initial Version
+Version 2.0:
+    - added support for input of objects. -Attribute parameter will define which attribute of the piped object will be used.
+    - reduced JoinLimit from 100 to 25. Get-EXOMailbox fails already with 50 joined filters
+
 Maximilian Otter, 2020-09-02
 Twitter: @Otterkring
 #>
@@ -58,7 +63,7 @@ function New-UniFilter {
         $Operator,
         # value to compare, ideally coming from pipeline
         [Parameter(Mandatory,ValueFromPipeline)]
-        $Value,
+        $InputObject,
         # Join operator concatenate filters
         [Parameter(Mandatory)]
         [ValidateSet('and','or')]
@@ -67,7 +72,7 @@ function New-UniFilter {
         # Maximum of individual filters to join together before returning the unifilter
         [Parameter()]
         [byte]
-        $JoinLimit = 100
+        $JoinLimit = 25
     )
     
     begin {
@@ -76,9 +81,20 @@ function New-UniFilter {
     
     process {
 
+        if ($InputObject -is [psobject]) {
+            if ($InputObject.PSObject.Properties.Name -contains $Attribute) {
+                $Value = $InputObject.$Attribute
+            } else {
+                Throw "InputObject does not contain an attribute `"$Attribute`""
+            }
+        } else {
+            $Value = $InputObject
+        }
+
         if ($Value -is [string]) {
             $Value = [string]::Concat("'",$Value,"'")
         }
+
         $Filters.Add([string]::Concat($Attribute,' -',$Operator,' ',$Value))
 
         if ($Filters.Count -eq $JoinLimit) {
