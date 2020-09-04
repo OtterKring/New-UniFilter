@@ -39,6 +39,12 @@ DEFAULT = 25
 .EXAMPLE
 1234,5678,'unkown' | New-UniFilter -Attribute EmployeeID -Operator eq -LogicalJoin or | %{Get-ADUser -Filter $_}
 
+.EXAMPLE
+Get-ADUser -Filter "EmployeeID -gt 1000 -and EmployeeID -lt 2000" | New-UniFilter -Attribute userprincipalname -Operator eq -LogicalJoin or | Foreach -Object {Get-ExoMailbox Filter $_ }
+
+When a full object is piped to the function, -Attribute will define the field where to take the value from.
+If the object does not include and attribute with the same name a terminating error will be thrown.
+
 .NOTES
 Version 1.0:
     Initial Version

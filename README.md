@@ -33,6 +33,10 @@ The function `New-UniFilter` does all the filter building work for you:
 
     "EmployeeID -eq '10001' -or EmployeeID -eq '10020' -or EmployeeID -eq '10032'"
 
+You can pipe  full objects to the function, too. The `-Attribute` will define, which value to take from the object, given it exists:
+
+    Get-ADUser -Filter "EmployeeID -gt 1000 -and EmployeeID -lt 2000" | New-UniFilter -Attribute userprincipalname -Operator eq -LogicalJoin or | Foreach -Object {Get-ExoMailbox Filter $_ }
+
 
 The filter length is limited to 25 clauses but can be manually overwritten using the `-JoinLimit` parameter. There is a hardcoded limit in the cmdlets, though, so don't get too excited about it. :-)
 
