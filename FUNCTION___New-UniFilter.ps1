@@ -46,9 +46,9 @@ When a full object is piped to the function, -Attribute will define the field wh
 If the object does not include and attribute with the same name a terminating error will be thrown.
 
 .NOTES
-Version 1.0:
+Version 1.0, 2020-09-02:
     Initial Version
-Version 2.0:
+Version 2.0, 2020-09-04:
     - added support for input of objects. -Attribute parameter will define which attribute of the piped object will be used.
     - reduced JoinLimit from 100 to 25. Get-EXOMailbox fails already with 50 joined filters
 
@@ -87,18 +87,18 @@ function New-UniFilter {
     
     process {
 
-        if ($InputObject -is [psobject]) {
+        if ($InputObject -is [string] -or $InputObject -is [valuetype]) {
+            if ($InputObject -is [string]) {
+                $Value = [string]::Concat("'",$InputObject,"'")
+            } else {
+                $Value = $InputObject
+            }            
+        } else {
             if ($InputObject.PSObject.Properties.Name -contains $Attribute) {
                 $Value = $InputObject.$Attribute
             } else {
                 Throw "InputObject does not contain an attribute `"$Attribute`""
-            }
-        } else {
-            $Value = $InputObject
-        }
-
-        if ($Value -is [string]) {
-            $Value = [string]::Concat("'",$Value,"'")
+            }            
         }
 
         $Filters.Add([string]::Concat($Attribute,' -',$Operator,' ',$Value))
