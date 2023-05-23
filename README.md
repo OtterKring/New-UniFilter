@@ -1,4 +1,4 @@
-# PS_New-UniFilter
+# New-UniFilter
 create one filter for checking many value on one attribute
 
 ## Why?
@@ -16,7 +16,7 @@ If you run ...
     
 ... you create 3 calls (usually your list is longer, but just for the example).
 
-You coud write ...
+You could write ...
 
     Get-ADUser -Filter "EmployeeID -eq '10001' -or EmployeeID -eq '10020' -or EmployeeID -eq '10032'" -Properties EmployeeID | Select-Object Name,EmployeeID
     
